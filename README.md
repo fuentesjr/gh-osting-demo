@@ -1,29 +1,29 @@
-Docker MySQL master-slave replication 
+Docker MySQL primary-replica replication
 ========================
 
-MySQL master-slave replication with using Docker. 
+MySQL primary-replica replication with using Docker.
 
 ## Run
 
-To run this examples you will need to start containers with "docker-compose" 
-and after starting setup replication. See commands inside ./build.sh. 
+To run this examples you will need to start containers with "docker-compose"
+and after starting setup replication. See commands inside ./build.sh.
 
-#### Create 2 MySQL containers with master-slave row-based replication 
+#### Create 2 MySQL containers with primary-replica row-based replication
 
 ```
 ./build.sh
 ```
 
-#### Make changes to master
+#### Make changes to primary
 
 ```
-docker exec mysql_master sh -c "export MYSQL_PWD=111; mysql -u root mydb -e 'create table code(code int); insert into code values (100), (200)'"
+docker exec mysql_primary sh -c "export MYSQL_PWD=111; mysql -u root mydb -e 'create table code(code int); insert into code values (100), (200)'"
 ```
 
-#### Read changes from slave
+#### Read changes from replica
 
 ```
-docker exec mysql_slave sh -c "export MYSQL_PWD=111; mysql -u root mydb -e 'select * from code \G'"
+docker exec mysql_replica sh -c "export MYSQL_PWD=111; mysql -u root mydb -e 'select * from code \G'"
 ```
 
 ## Troubleshooting
@@ -47,30 +47,30 @@ docker-compose ps
 #### Clean data dir
 
 ```
-rm -rf ./master/data/*
-rm -rf ./slave/data/*
+rm -rf ./primary/data/*
+rm -rf ./replica/data/*
 ```
 
-#### Run command inside "mysql_master"
+#### Run command inside "mysql_primary"
 
 ```
-docker exec mysql_master sh -c 'mysql -u root -p111 -e "SHOW MASTER STATUS \G"'
+docker exec mysql_primary sh -c 'mysql -u root -p111 -e "SHOW PRIMARY STATUS \G"'
 ```
 
-#### Run command inside "mysql_slave"
+#### Run command inside "mysql_replica"
 
 ```
-docker exec mysql_slave sh -c 'mysql -u root -p111 -e "SHOW SLAVE STATUS \G"'
+docker exec mysql_replica sh -c 'mysql -u root -p111 -e "SHOW REPLICA STATUS \G"'
 ```
 
-#### Enter into "mysql_master"
+#### Enter into "mysql_primary"
 
 ```
-docker exec -it mysql_master bash
+docker exec -it mysql_primary bash
 ```
 
-#### Enter into "mysql_slave"
+#### Enter into "mysql_replica"
 
 ```
-docker exec -it mysql_slave bash
+docker exec -it mysql_replica bash
 ```
